@@ -56,8 +56,50 @@ dotnet test
 ## Help
 To learn more about the template go to the [project website](https://cleanarchitecture.jasontaylor.dev). Here you can find additional guidance, request new features, report a bug, and discuss the template with other users.
 
+## Docker Deployment
+
+Этот проект поддерживает развертывание в Docker с двумя режимами: Production и Development.
+
+### Production
+
+- **Порт**: 80
+- **Окружение**: Production
+- **Доступ**: http://localhost:80
+
+Запуск Production окружения:
+```bash
+docker-compose up -d
+```
+
+Подробнее в [DOCKER_DEPLOYMENT.md](./DOCKER_DEPLOYMENT.md#production-окружение)
+
+### Development
+
+- **Порт**: 8383
+- **Окружение**: Development
+- **Доступ**: http://localhost:8383
+
+Запуск Development окружения:
+```bash
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+Подробнее в [DOCKER_DEPLOYMENT.md](./DOCKER_DEPLOYMENT.md#development-окружение)
+
+### Структура Docker файлов
+
+- `Dockerfile` - файл для сборки Docker образа
+- `docker-compose.yml` - конфигурация Production
+- `docker-compose.dev.yml` - конфигурация Development
+- `.env` - переменные окружения Production
+- `.env.dev` - переменные окружения Development
+- `.dockerignore` - исключение файлов из сборки
+
+Полная документация по Docker развертыванию доступна в файле [DOCKER_DEPLOYMENT.md](./DOCKER_DEPLOYMENT.md).
+
 ## Migrations
 ```
 dotnet ef migrations add InitialCreate --project src/Infrastructure --startup-project src/Web --context directory.web.Infrastructure.Data.ApplicationDbContext --output-dir Data/Migrations
 dotnet ef database update --project src/Infrastructure --startup-project src/Web --context ApplicationDbContext
 ```
+ ++++++++ REPLACE
