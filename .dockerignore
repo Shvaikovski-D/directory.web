@@ -1,0 +1,53 @@
+# .NET
+bin/
+obj/
+out/
+*.user
+*.suo
+*.cache
+*.lock.json
+
+# Visual Studio
+.vs/
+.vscode/
+*.sln
+*.slnx
+*.csproj
+*.fsproj
+*.vbproj
+
+# Tests
+tests/
+*.Tests/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+!Directory.Build.props
+!Directory.Packages.props
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+AGENT.md
+*.md
+
+# Artifacts
+artifacts/
+
+# Node (if any frontend)
+node_modules/
+npm-debug.log
+
+# Logs
+logs/
+*.log
+
+# IDE
+.idea/
+*.iml
