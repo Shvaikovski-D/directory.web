@@ -24,10 +24,7 @@ else
     app.UseHsts();
 }
 
-if (app.Environment.IsProduction())
-{
-    app.UseHttpsRedirection();
-}
+//app.UseHttpsRedirection();
 
 app.UseCors(static builder => 
     builder.AllowAnyMethod()
