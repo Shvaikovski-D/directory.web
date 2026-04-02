@@ -34,6 +34,6 @@ RUN dotnet publish "Web.csproj" -c Release -o /app/publish /p:UseAppHost=false
 # Этап выполнения
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
-EXPOSE 8080
+EXPOSE 80
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "directory.web.Web.dll"]
