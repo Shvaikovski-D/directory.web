@@ -1,7 +1,9 @@
+using System.Reflection;
 using Azure.Identity;
 using directory.web.Application.Common.Interfaces;
 using directory.web.Infrastructure.Data;
 using directory.web.Web.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -32,6 +34,8 @@ public static class DependencyInjection
         });
 
         builder.Services.AddCors();
+
+        builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
     }
 
     public static void AddKeyVaultIfConfigured(this IHostApplicationBuilder builder)

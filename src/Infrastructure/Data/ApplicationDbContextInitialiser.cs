@@ -38,6 +38,22 @@ public class ApplicationDbContextInitialiser
         _roleManager = roleManager;
     }
 
+    private async Task<IdentityRole> CreateRole(string roleName)
+    {
+        var role = new IdentityRole(roleName);
+        
+        if (_roleManager.Roles.All(r => r.Name != role.Name))
+        {
+            await _roleManager.CreateAsync(role);
+        }
+        else
+        {
+            role = await _roleManager.FindByNameAsync(roleName) ?? throw new Exception($"Role '{roleName}' not found.");
+        }
+        
+        return role;
+    }
+
     public async Task InitialiseAsync()
     {
         try
@@ -70,26 +86,69 @@ public class ApplicationDbContextInitialiser
     public async Task TrySeedAsync()
     {
         // Default roles
-        var administratorRole = new IdentityRole(Roles.Administrator);
-
-        if (_roleManager.Roles.All(r => r.Name != administratorRole.Name))
-        {
-            await _roleManager.CreateAsync(administratorRole);
-        }
+        var administratorRole = await CreateRole(Roles.Administrator);
+        var managerRole = await CreateRole(Roles.Manager);
 
         // Default users
-        var administrator = new ApplicationUser { UserName = "administrator@localhost", Email = "administrator@localhost" };
+        var administrator = new ApplicationUser {
+            UserName = "admin",
+            Email = "admin@local.com",
+            FirstName = "Антон",
+            LastName = "Комаров"
+        };
 
         if (_userManager.Users.All(u => u.UserName != administrator.UserName))
         {
-            await _userManager.CreateAsync(administrator, "Administrator1!");
+            await _userManager.CreateAsync(administrator, "Password1!");
             if (!string.IsNullOrWhiteSpace(administratorRole.Name))
             {
                 await _userManager.AddToRolesAsync(administrator, new [] { administratorRole.Name });
             }
         }
 
+        var manager = new ApplicationUser {
+            UserName = "manager",
+            Email = "manager@local.com",
+            FirstName = "Дарья",
+            LastName = "Кириллова"
+        };
+
+        if (_userManager.Users.All(u => u.UserName != manager.UserName))
+        {
+            await _userManager.CreateAsync(manager, "Password1!");
+            if (!string.IsNullOrWhiteSpace(managerRole.Name))
+            {
+                await _userManager.AddToRolesAsync(manager, new [] { managerRole.Name });
+            }
+        }
+
         // Default data
+        if (!_context.Forklifts.Any())
+        {
+            _context.Forklifts.Add(new Forklift
+            {
+                Brand = "Brand 001",
+                Number = "A1-B392",
+                LoadCapacity = 3.274M,
+                IsActive = true,
+                Created = DateTimeOffset.UtcNow,
+                CreatedBy = administrator.Id,
+                LastModified = DateTimeOffset.UtcNow,
+                LastModifiedBy = administrator.Id
+            });
+            _context.Forklifts.Add(new Forklift
+            {
+                Brand = "Brand 002",
+                Number = "B6-V927",
+                LoadCapacity = 8.291M,
+                IsActive = true,
+                Created = DateTimeOffset.UtcNow,
+                CreatedBy = administrator.Id,
+                LastModified = DateTimeOffset.UtcNow,
+                LastModifiedBy = administrator.Id
+            });
+            await _context.SaveChangesAsync();
+        }
         // Seed, if necessary
         if (!_context.TodoLists.Any())
         {

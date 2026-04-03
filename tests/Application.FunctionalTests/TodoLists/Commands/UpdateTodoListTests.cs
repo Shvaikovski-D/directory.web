@@ -11,7 +11,7 @@ public class UpdateTodoListTests : TestBase
     public async Task ShouldRequireValidTodoListId()
     {
         var command = new UpdateTodoListCommand { Id = 99, Title = "New Title" };
-        await Should.ThrowAsync<NotFoundException>(() => TestApp.SendAsync(command));
+        await Should.ThrowAsync<Application.Common.Exceptions.NotFoundException>(() => TestApp.SendAsync(command));
     }
 
     [Test]
