@@ -1,14 +1,17 @@
-﻿using directory.web.Domain.Entities;
+﻿  using directory.web.Domain.Entities;
+  using Microsoft.EntityFrameworkCore;
 
-namespace directory.web.Application.Common.Interfaces;
+  namespace directory.web.Application.Common.Interfaces;
 
-public interface IApplicationDbContext
-{
-    DbSet<TodoList> TodoLists { get; }
+  public interface IApplicationDbContext
+  {
+      DbSet<TodoList> TodoLists { get; }
 
-    DbSet<TodoItem> TodoItems { get; }
+      DbSet<TodoItem> TodoItems { get; }
 
-    DbSet<Forklift> Forklifts { get; }
+      DbSet<Forklift> Forklifts { get; }
 
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken);
-}
+      DbSet<TEntity> Set<TEntity>() where TEntity : class;
+
+      Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+  }

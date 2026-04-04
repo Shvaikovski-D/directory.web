@@ -1,4 +1,5 @@
 using directory.web.Domain.Entities;
+using directory.web.Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -31,6 +32,12 @@ public class ForkliftConfiguration : IEntityTypeConfiguration<Forklift>
             .IsRequired(false);
 
         builder.HasIndex(f => f.DeletedAt);
+
+        // Настройка связи с пользователем, который последним модифицировал запись
+        builder.HasOne<ApplicationUser>()
+            .WithMany()
+            .HasForeignKey(f => f.LastModifiedBy)
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Глобальный Query Filter для автоматического исключения удаленных записей
         builder.HasQueryFilter(f => f.DeletedAt == null);

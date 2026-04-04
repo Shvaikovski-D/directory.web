@@ -5,10 +5,10 @@ namespace directory.web.Infrastructure.Identity;
 
 public static class IdentityResultExtensions
 {
-    public static Result ToApplicationResult(this IdentityResult result)
+    public static SimpleResult ToApplicationResult(this IdentityResult result)
     {
         return result.Succeeded
-            ? Result.Success()
-            : Result.Failure(result.Errors.Select(e => e.Description));
+            ? SimpleResult.Success()
+            : SimpleResult.Failure(result.Errors.Select(e => e.Description));
     }
 }

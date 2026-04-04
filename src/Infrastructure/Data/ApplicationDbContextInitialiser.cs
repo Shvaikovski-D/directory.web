@@ -30,7 +30,12 @@ public class ApplicationDbContextInitialiser
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
 
-    public ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitialiser> logger, ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+    public ApplicationDbContextInitialiser(
+        ILogger<ApplicationDbContextInitialiser> logger,
+        ApplicationDbContext context,
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
+        RoleManager<IdentityRole> roleManager)
     {
         _logger = logger;
         _context = context;
@@ -91,7 +96,7 @@ public class ApplicationDbContextInitialiser
 
         // Default users
         var administrator = new ApplicationUser {
-            UserName = "admin",
+            UserName = "admin@local.com",
             Email = "admin@local.com",
             FirstName = "Антон",
             LastName = "Комаров"
@@ -105,9 +110,15 @@ public class ApplicationDbContextInitialiser
                 await _userManager.AddToRolesAsync(administrator, new [] { administratorRole.Name });
             }
         }
+        administrator = await _userManager.FindByNameAsync(administrator.UserName);
+        if (administrator is null)
+        {
+            _logger.LogError("An error occurred while getting user from the database.");
+            throw new NullReferenceException();
+        }
 
         var manager = new ApplicationUser {
-            UserName = "manager",
+            UserName = "manager@local.com",
             Email = "manager@local.com",
             FirstName = "Дарья",
             LastName = "Кириллова"
@@ -121,12 +132,20 @@ public class ApplicationDbContextInitialiser
                 await _userManager.AddToRolesAsync(manager, new [] { managerRole.Name });
             }
         }
+        manager = await _userManager.FindByNameAsync(manager.UserName);
+        if (manager is null)
+        {
+            _logger.LogError("An error occurred while getting user from the database.");
+            throw new NullReferenceException();
+        }
+
 
         // Default data
         if (!_context.Forklifts.Any())
         {
             _context.Forklifts.Add(new Forklift
             {
+                Id = 1,
                 Brand = "Brand 001",
                 Number = "A1-B392",
                 LoadCapacity = 3.274M,
@@ -138,6 +157,7 @@ public class ApplicationDbContextInitialiser
             });
             _context.Forklifts.Add(new Forklift
             {
+                Id = 2,
                 Brand = "Brand 002",
                 Number = "B6-V927",
                 LoadCapacity = 8.291M,

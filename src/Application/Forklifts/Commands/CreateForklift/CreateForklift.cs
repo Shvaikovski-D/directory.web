@@ -1,11 +1,13 @@
+using Ardalis.Result;
 using directory.web.Application.Common.Exceptions;
 using directory.web.Application.Common.Interfaces;
+using directory.web.Application.Common.Models;
 using directory.web.Domain.Entities;
 using MediatR;
 
 namespace directory.web.Application.Forklifts.Commands.CreateForklift;
 
-public record CreateForkliftCommand : IRequest<int>
+public record CreateForkliftCommand : IRequest<Result<int>>
 {
     public string Brand { get; init; } = string.Empty;
 
@@ -14,7 +16,7 @@ public record CreateForkliftCommand : IRequest<int>
     public decimal LoadCapacity { get; init; }
 }
 
-public class CreateForkliftCommandHandler : IRequestHandler<CreateForkliftCommand, int>
+public class CreateForkliftCommandHandler : IRequestHandler<CreateForkliftCommand, Result<int>>
 {
     private readonly IApplicationDbContext _context;
 
@@ -23,7 +25,7 @@ public class CreateForkliftCommandHandler : IRequestHandler<CreateForkliftComman
         _context = context;
     }
 
-    public async Task<int> Handle(CreateForkliftCommand request, CancellationToken cancellationToken)
+    public async Task<Result<int>> Handle(CreateForkliftCommand request, CancellationToken cancellationToken)
     {
         // Проверяем уникальность номера погрузчика
         var exists = await _context.Forklifts
@@ -31,7 +33,7 @@ public class CreateForkliftCommandHandler : IRequestHandler<CreateForkliftComman
 
         if (exists)
         {
-            throw new ConflictException($"Погрузчик с номером '{request.Number}' уже существует.");
+            return Result.Conflict($"Погрузчик с номером '{request.Number}' уже существует.");
         }
 
         var entity = new Forklift
@@ -46,6 +48,6 @@ public class CreateForkliftCommandHandler : IRequestHandler<CreateForkliftComman
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return entity.Id;
+        return Result.Success(entity.Id);
     }
 }

@@ -1,30 +1,30 @@
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using directory.web.Application.Common.Interfaces;
 using directory.web.Application.Forklifts.Dtos;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace directory.web.Application.Forklifts.Queries.GetForkliftById;
 
-public record GetForkliftByIdQuery(int Id) : IRequest<ForkliftDto?>;
+public record GetForkliftByIdQuery(int Id) : IRequest<Result<ForkliftItemDto>>;
 
-public class GetForkliftByIdQueryHandler : IRequestHandler<GetForkliftByIdQuery, ForkliftDto?>
+public class GetForkliftByIdQueryHandler : IRequestHandler<GetForkliftByIdQuery, Result<ForkliftItemDto>>
 {
-    private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
+    private readonly IForkliftRepository _forkliftRepository;
 
-    public GetForkliftByIdQueryHandler(IApplicationDbContext context, IMapper mapper)
+    public GetForkliftByIdQueryHandler(IForkliftRepository forkliftRepository)
     {
-        _context = context;
-        _mapper = mapper;
+        _forkliftRepository = forkliftRepository;
     }
 
-    public async Task<ForkliftDto?> Handle(GetForkliftByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<ForkliftItemDto>> Handle(GetForkliftByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Forklifts
-            .AsNoTracking()
-            .Where(f => f.Id == request.Id)
-            .ProjectTo<ForkliftDto>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync(cancellationToken);
+        var forklift = await _forkliftRepository.GetAsync(request.Id, cancellationToken);
+
+        if (forklift == null)
+        {
+            return Result.NotFound();
+        }
+
+        return forklift;
     }
 }

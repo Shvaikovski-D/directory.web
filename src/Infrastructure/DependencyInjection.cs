@@ -1,12 +1,13 @@
-﻿using directory.web.Application.Common.Interfaces;
-using directory.web.Infrastructure.Data;
-using directory.web.Infrastructure.Data.Interceptors;
-using directory.web.Infrastructure.Identity;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
+﻿  using directory.web.Application.Common.Interfaces;
+  using directory.web.Infrastructure.Data;
+  using directory.web.Infrastructure.Data.Interceptors;
+  using directory.web.Infrastructure.Data.Repositories;
+  using directory.web.Infrastructure.Identity;
+  using Microsoft.AspNetCore.Identity;
+  using Microsoft.EntityFrameworkCore;
+  using Microsoft.EntityFrameworkCore.Diagnostics;
+  using Microsoft.Extensions.Configuration;
+  using Microsoft.Extensions.Hosting;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -30,6 +31,8 @@ public static class DependencyInjection
         builder.EnrichNpgsqlDbContext<ApplicationDbContext>();
 
         builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+
+        builder.Services.AddScoped<IForkliftRepository, ForkliftRepository>();
 
         builder.Services.AddScoped<ApplicationDbContextInitialiser>();
 

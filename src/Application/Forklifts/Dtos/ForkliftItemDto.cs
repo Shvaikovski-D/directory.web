@@ -3,7 +3,7 @@ using directory.web.Domain.Entities;
 
 namespace directory.web.Application.Forklifts.Dtos;
 
-public class ForkliftDto
+public class ForkliftItemDto
 {
     public int Id { get; init; }
 
@@ -15,19 +15,15 @@ public class ForkliftDto
 
     public bool IsActive { get; init; }
 
-    public DateTimeOffset Created { get; init; }
-
-    public string? CreatedBy { get; init; }
-
     public DateTimeOffset LastModified { get; init; }
 
-    public string? LastModifiedBy { get; init; }
+    public string? LastModifiedBy { get; set; }
 
     private class Mapping : Profile
     {
         public Mapping()
         {
-            CreateMap<Forklift, ForkliftDto>();
+            CreateMap<Forklift, ForkliftItemDto>();
         }
     }
 }

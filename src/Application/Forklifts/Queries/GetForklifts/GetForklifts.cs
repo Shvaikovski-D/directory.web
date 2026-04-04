@@ -1,40 +1,32 @@
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
+using directory.web.Application.Common;
 using directory.web.Application.Common.Interfaces;
+using directory.web.Application.Common.Models;
 using directory.web.Application.Forklifts.Dtos;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace directory.web.Application.Forklifts.Queries.GetForklifts;
 
-public record GetForkliftsQuery(string? SearchNumber = null) : IRequest<List<ForkliftDto>>;
+public record GetForkliftsQuery(string? SearchNumber = null, int? Page = Constants.DEFAULT_PAGE, int? PerPage = Constants.DEFAULT_PAGE_SIZE)
+    : IRequest<Result<PagedResultModel<ForkliftItemDto>>>;
 
-public class GetForkliftsQueryHandler : IRequestHandler<GetForkliftsQuery, List<ForkliftDto>>
+public class GetForkliftsQueryHandler : IRequestHandler<GetForkliftsQuery, Result<PagedResultModel<ForkliftItemDto>>>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IForkliftRepository _forkliftRepository;
     private readonly IMapper _mapper;
 
-    public GetForkliftsQueryHandler(IApplicationDbContext context, IMapper mapper)
+    public GetForkliftsQueryHandler(IForkliftRepository forkliftRepository, IMapper mapper)
     {
-        _context = context;
+        _forkliftRepository = forkliftRepository;
         _mapper = mapper;
     }
 
-    public async Task<List<ForkliftDto>> Handle(GetForkliftsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PagedResultModel<ForkliftItemDto>>> Handle(GetForkliftsQuery request, CancellationToken cancellationToken)
     {
-        var query = _context.Forklifts
-            .AsNoTracking();
+        var result = await _forkliftRepository.GetListAsync(
+            request.SearchNumber,
+            request.Page ?? Constants.DEFAULT_PAGE,
+            request.PerPage ?? Constants.DEFAULT_PAGE_SIZE,
+            cancellationToken);
 
-        // Поиск по номеру погрузчика - поиск по вхождению строки без учета регистра
-        if (!string.IsNullOrWhiteSpace(request.SearchNumber))
-        {
-            var searchNumber = request.SearchNumber.ToLower();
-            query = query.Where(f => EF.Functions.Like(f.Number.ToLower(), $"%{searchNumber}%"));
-        }
-
-        return await query
-            .OrderBy(f => f.Number)
-            .ProjectTo<ForkliftDto>(_mapper.ConfigurationProvider)
-            .ToListAsync(cancellationToken);
+        return Result.Success(result);
     }
 }
