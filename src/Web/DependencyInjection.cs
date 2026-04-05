@@ -1,7 +1,6 @@
 using System.Reflection;
 using Azure.Identity;
 using directory.web.Application.Common.Interfaces;
-using directory.web.Infrastructure.Data;
 using directory.web.Web.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +32,18 @@ public static class DependencyInjection
             options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
         });
 
-        builder.Services.AddCors();
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(
+                builder =>
+                {
+                    builder/*WithOrigins("http://localhost:4200")*/
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        /*.AllowCredentials()*/;
+                });
+        });
 
         builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
     }

@@ -27,12 +27,12 @@ else
 
 //app.UseHttpsRedirection();
 
-app.UseCors(static builder => 
-    builder.AllowAnyMethod()
-        .AllowAnyHeader()
-        .AllowAnyOrigin());
+app.UseCors();
 
 app.UseFileServer();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapOpenApi();
 app.MapScalarApiReference();
