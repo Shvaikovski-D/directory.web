@@ -17,6 +17,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 
     public DbSet<Forklift> Forklifts => Set<Forklift>();
 
+    public DbSet<Downtime> Downtimes => Set<Downtime>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

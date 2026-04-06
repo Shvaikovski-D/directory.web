@@ -91,7 +91,7 @@ public class Forklifts : IEndpointGroup
     [EndpointDescription("Performs soft delete of the forklift with the specified ID. The record remains in the database but is marked as deleted.")]
     public static async Task<NoContent> DeleteForklift(ISender sender, int id)
     {
-        await sender.Send(new DeleteForkliftCommand(id));
+        await sender.Send(new HardDeleteForkliftCommand(id));
 
         return TypedResults.NoContent();
     }
