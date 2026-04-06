@@ -4,9 +4,10 @@ using Scalar.AspNetCore;
 
 // Настройка порта для Render.com
 // Render.com устанавливает переменную PORT автоматически
+/*
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 Environment.SetEnvironmentVariable("ASPNETCORE_URLS", $"http://+:{port}");
-
+*/
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
