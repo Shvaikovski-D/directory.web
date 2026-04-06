@@ -26,9 +26,12 @@ COPY ["src/Infrastructure/", "Infrastructure/"]
 COPY ["src/ServiceDefaults/", "ServiceDefaults/"]
 COPY ["src/Shared/", "Shared/"]
 
-# Публикуем проект в один этап (сразу publish)
+# Публикуем проект
 WORKDIR "/src/Web"
 RUN dotnet publish "Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+# Этап publish для копирования файлов
+FROM build AS publish
 
 # Этап выполнения
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
